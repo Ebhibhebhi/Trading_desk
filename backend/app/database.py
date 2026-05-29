@@ -3,7 +3,8 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
 
-DB_PATH = Path(__file__).parent.parent / "skystrike.db"
+import os
+DB_PATH = os.getenv("DB_PATH", str(Path(__file__).parent.parent / "skystrike.db"))
 DATABASE_URL = f"sqlite+aiosqlite:///{DB_PATH}"
 
 engine = create_async_engine(
