@@ -35,19 +35,31 @@ def compute_depletion_rate(snapshots: list) -> Optional[float]:
     return max(0.0, (first_count - last_count) / first_count)
 
 
+def price_firmness_raw(price_floor: Optional[float], price_median: Optional[float]) -> Optional[float]:
+    """Ratio of floor to median — higher means tight spread, strong demand."""
+    if not price_floor or not price_median or price_median == 0:
+        return None
+    return min(price_floor / price_median, 1.0)
+
+
 def compute_signals(events_data: list[dict]) -> list[dict]:
     """Normalize all signals to 0–1 via percentile rank, then attach to each event."""
-    popularities = [e["artist_popularity"] for e in events_data if e.get("artist_popularity") is not None]
+    firmness_vals = [
+        price_firmness_raw(e.get("price_floor"), e.get("price_median"))
+        for e in events_data
+    ]
+    firmness_vals = [v for v in firmness_vals if v is not None]
+
     listing_counts = [e["listing_count"] for e in events_data if e.get("listing_count") is not None]
     depletion_rates = [e["depletion_rate"] for e in events_data if e.get("depletion_rate") is not None]
 
     results = []
     for e in events_data:
-        artist_heat = (
-            percentile_rank(e["artist_popularity"], popularities)
-            if e.get("artist_popularity") is not None else None
+        raw_firmness = price_firmness_raw(e.get("price_floor"), e.get("price_median"))
+        price_firmness = (
+            percentile_rank(raw_firmness, firmness_vals)
+            if raw_firmness is not None else None
         )
-        # Invert: fewer listings = higher supply pressure score
         supply_pressure = (
             1.0 - percentile_rank(e["listing_count"], listing_counts)
             if e.get("listing_count") is not None else None
@@ -64,7 +76,7 @@ def compute_signals(events_data: list[dict]) -> list[dict]:
         results.append({
             **e,
             "signals": {
-                "artist_heat": artist_heat,
+                "price_firmness": price_firmness,
                 "supply_pressure": supply_pressure,
                 "depletion_rate": depletion,
                 "days_to_event": days_score,

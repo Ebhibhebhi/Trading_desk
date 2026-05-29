@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, JSON
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -10,12 +10,6 @@ class Artist(Base):
     id = Column(Integer, primary_key=True)
     seatgeek_id = Column(String, unique=True, index=True)
     name = Column(String, nullable=False)
-    spotify_id = Column(String, nullable=True)
-    popularity = Column(Integer, nullable=True)       # 0–100
-    followers = Column(Integer, nullable=True)
-    monthly_listeners = Column(Integer, nullable=True)
-    genres = Column(JSON, nullable=True)
-    spotify_updated_at = Column(DateTime, nullable=True)
 
     events = relationship("Event", back_populates="artist")
 

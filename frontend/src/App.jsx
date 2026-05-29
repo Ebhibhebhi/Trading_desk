@@ -6,7 +6,7 @@ import ThresholdConfig from './components/ThresholdConfig';
 import { fetchEvents, fetchConfig, updateConfig, triggerRefresh } from './api';
 
 const DEFAULT_WEIGHTS = {
-  artist_heat:     0.30,
+  price_firmness:  0.30,
   supply_pressure: 0.25,
   depletion_rate:  0.25,
   days_to_event:   0.20,

@@ -1,8 +1,8 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from ..models import Artist, Event, PriceSnapshot
-from . import seatgeek, spotify
+from . import seatgeek
 
 
 async def poll_events(db: AsyncSession) -> None:
@@ -44,27 +44,10 @@ async def _upsert_artist(db: AsyncSession, name: str, seatgeek_id: str | None) -
     result = await db.execute(select(Artist).where(Artist.seatgeek_id == seatgeek_id))
     artist = result.scalar_one_or_none()
 
-    now = datetime.utcnow()
-
     if not artist:
         artist = Artist(name=name, seatgeek_id=seatgeek_id)
         db.add(artist)
         await db.flush()
-
-    needs_spotify_refresh = (
-        artist.spotify_updated_at is None
-        or (now - artist.spotify_updated_at) > timedelta(hours=24)
-    )
-
-    if needs_spotify_refresh:
-        spotify_raw = await spotify.search_artist(name)
-        if spotify_raw:
-            parsed = spotify.parse_artist(spotify_raw)
-            artist.spotify_id = parsed["spotify_id"]
-            artist.popularity = parsed["popularity"]
-            artist.followers = parsed["followers"]
-            artist.genres = parsed["genres"]
-            artist.spotify_updated_at = now
 
     return artist
 

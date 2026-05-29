@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 
 const SIGNAL_LABELS = {
-  artist_heat:     'Artist Heat',
+  price_firmness:  'Price Firmness',
   supply_pressure: 'Supply Pressure',
   depletion_rate:  'Depletion Rate',
   days_to_event:   'Timing Score',

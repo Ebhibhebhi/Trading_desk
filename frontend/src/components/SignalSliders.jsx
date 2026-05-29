@@ -1,5 +1,5 @@
 const SIGNALS = [
-  { key: 'artist_heat', label: 'Artist Heat', desc: 'Spotify popularity score' },
+  { key: 'price_firmness', label: 'Price Firmness', desc: 'Floor-to-median ratio — tight market = high demand' },
   { key: 'supply_pressure', label: 'Supply Pressure', desc: 'Inverse of listing count' },
   { key: 'depletion_rate', label: 'Depletion Rate', desc: 'How fast listings disappear' },
   { key: 'days_to_event', label: 'Timing Score', desc: 'Peaks at 14–45 days out' },

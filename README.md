@@ -14,18 +14,12 @@ A single-page trading tool that ranks upcoming LA concerts by opportunity. Pull 
 
 ## API Keys
 
-You need two sets of credentials before running the app.
-
-**Spotify** (required — powers the Artist Heat signal)
-1. Go to [developer.spotify.com/dashboard](https://developer.spotify.com/dashboard)
-2. Log in and click **Create app**
-3. Name it anything, set the redirect URI to `http://localhost`
-4. Open the app → **Settings** → copy your **Client ID** and **Client Secret**
-
 **SeatGeek** (optional but recommended for higher rate limits)
 1. Go to [seatgeek.com/account/develop](https://seatgeek.com/account/develop)
 2. Create a free account and register an app
 3. Copy your **Client ID**
+
+The app works without a SeatGeek client ID (uses their public endpoint), but you may hit rate limits faster without one.
 
 ---
 
@@ -58,12 +52,10 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Open `.env` and fill in your keys:
+Open `.env` and fill in your key:
 
 ```
 SEATGEEK_CLIENT_ID=your_seatgeek_client_id
-SPOTIFY_CLIENT_ID=your_spotify_client_id
-SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
 ```
 
 ### 3. Frontend
@@ -129,7 +121,7 @@ Scores update instantly as you move sliders — no page reload needed.
 
 | Signal | Source | Description |
 |---|---|---|
-| Artist Heat | Spotify | Popularity score (0–100), percentile-ranked across all events |
+| Price Firmness | SeatGeek | Floor ÷ median price — tight spread signals strong demand |
 | Supply Pressure | SeatGeek | Inverse of listing count — fewer listings scores higher |
 | Depletion Rate | Computed | How fast listings are disappearing (needs 6+ hourly snapshots) |
 | Timing Score | Computed | Trapezoid curve peaking at 14–45 days before the event |
