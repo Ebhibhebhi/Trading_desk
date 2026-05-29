@@ -26,6 +26,8 @@ class Event(Base):
     venue_capacity = Column(Integer, nullable=True)
     event_date = Column(DateTime, nullable=True)
     url = Column(String, nullable=True)
+    performer_score = Column(Float, nullable=True)
+    event_score = Column(Float, nullable=True)
     last_polled_at = Column(DateTime, nullable=True)
 
     artist = relationship("Artist", back_populates="events")

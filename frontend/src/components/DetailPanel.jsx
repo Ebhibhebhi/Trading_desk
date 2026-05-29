@@ -3,10 +3,9 @@ import PriceHistoryChart from './PriceHistoryChart';
 import { fetchEventHistory } from '../api';
 
 const SIGNAL_META = {
-  price_firmness:  { label: 'Price Firmness',   desc: 'Floor ÷ median — tight spread signals demand' },
-  supply_pressure: { label: 'Supply Pressure',  desc: 'Inverse listing count (percentile)' },
-  depletion_rate:  { label: 'Depletion Rate',   desc: 'Listings lost since first snapshot' },
-  days_to_event:   { label: 'Timing Score',     desc: 'Trapezoid curve, peaks 14–45 days' },
+  artist_heat:  { label: 'Artist Heat',  desc: 'SeatGeek performer popularity (percentile-ranked)' },
+  event_buzz:   { label: 'Event Buzz',   desc: 'SeatGeek event demand score (percentile-ranked)' },
+  timing_score: { label: 'Timing Score', desc: 'Trapezoid curve, peaks 14–45 days out' },
 };
 
 export default function DetailPanel({ event, weights, onClose }) {

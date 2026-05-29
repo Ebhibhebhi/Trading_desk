@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from ..models import Artist, Event, PriceSnapshot
+from ..models import Artist, Event
 from . import seatgeek
 
 
@@ -21,18 +21,7 @@ async def poll_events(db: AsyncSession) -> None:
             continue
 
         artist = await _upsert_artist(db, parsed["artist_name"], parsed["artist_seatgeek_id"])
-        event = await _upsert_event(db, parsed, artist.id if artist else None)
-
-        snapshot = PriceSnapshot(
-            event_id=event.id,
-            polled_at=datetime.utcnow(),
-            listing_count=parsed["listing_count"],
-            price_floor=parsed["price_floor"],
-            price_median=parsed["price_median"],
-            price_ceiling=parsed["price_ceiling"],
-        )
-        db.add(snapshot)
-        event.last_polled_at = datetime.utcnow()
+        await _upsert_event(db, parsed, artist.id if artist else None)
 
     await db.commit()
 
@@ -66,11 +55,15 @@ async def _upsert_event(db: AsyncSession, parsed: dict, artist_id: int | None) -
             venue_capacity=parsed["venue_capacity"],
             event_date=parsed["event_date"],
             url=parsed["url"],
+            performer_score=parsed["performer_score"],
+            event_score=parsed["event_score"],
         )
         db.add(event)
-        await db.flush()
     else:
+        event.performer_score = parsed["performer_score"]
+        event.event_score = parsed["event_score"]
         if parsed.get("venue_capacity"):
             event.venue_capacity = parsed["venue_capacity"]
 
+    event.last_polled_at = datetime.utcnow()
     return event

@@ -1,8 +1,7 @@
 const SIGNALS = [
-  { key: 'price_firmness', label: 'Price Firmness', desc: 'Floor-to-median ratio — tight market = high demand' },
-  { key: 'supply_pressure', label: 'Supply Pressure', desc: 'Inverse of listing count' },
-  { key: 'depletion_rate', label: 'Depletion Rate', desc: 'How fast listings disappear' },
-  { key: 'days_to_event', label: 'Timing Score', desc: 'Peaks at 14–45 days out' },
+  { key: 'artist_heat',  label: 'Artist Heat',  desc: 'SeatGeek performer popularity (percentile)' },
+  { key: 'event_buzz',   label: 'Event Buzz',   desc: 'SeatGeek event demand score (percentile)' },
+  { key: 'timing_score', label: 'Timing Score', desc: 'Peaks at 14–45 days out' },
 ];
 
 export default function SignalSliders({ weights, onChange }) {

@@ -4,8 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from ..database import get_db
-from ..models import Event, PriceSnapshot
-from ..services.signals import compute_signals, compute_depletion_rate
+from ..models import Event
+from ..services.signals import compute_signals
 
 router = APIRouter()
 
@@ -14,18 +14,14 @@ router = APIRouter()
 async def get_events(db: AsyncSession = Depends(get_db)):
     result = await db.execute(
         select(Event)
-        .options(selectinload(Event.artist), selectinload(Event.snapshots))
+        .options(selectinload(Event.artist))
         .where(Event.event_date >= datetime.utcnow())
         .order_by(Event.event_date)
     )
     events = result.scalars().all()
 
-    events_data = []
-    for ev in events:
-        snapshots_sorted = sorted(ev.snapshots, key=lambda s: s.polled_at)
-        latest = snapshots_sorted[-1] if snapshots_sorted else None
-
-        events_data.append({
+    events_data = [
+        {
             "id": ev.id,
             "seatgeek_id": ev.seatgeek_id,
             "title": ev.title,
@@ -36,13 +32,11 @@ async def get_events(db: AsyncSession = Depends(get_db)):
             "event_date": ev.event_date,
             "url": ev.url,
             "last_polled_at": ev.last_polled_at,
-            "snapshot_count": len(ev.snapshots),
-            "listing_count": latest.listing_count if latest else None,
-            "price_floor": latest.price_floor if latest else None,
-            "price_median": latest.price_median if latest else None,
-            "price_ceiling": latest.price_ceiling if latest else None,
-            "depletion_rate": compute_depletion_rate(snapshots_sorted),
-        })
+            "performer_score": ev.performer_score,
+            "event_score": ev.event_score,
+        }
+        for ev in events
+    ]
 
     enriched = compute_signals(events_data)
 
@@ -53,24 +47,3 @@ async def get_events(db: AsyncSession = Depends(get_db)):
             e["last_polled_at"] = e["last_polled_at"].isoformat()
 
     return enriched
-
-
-@router.get("/events/{event_id}/history")
-async def get_event_history(event_id: int, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(
-        select(PriceSnapshot)
-        .where(PriceSnapshot.event_id == event_id)
-        .order_by(PriceSnapshot.polled_at)
-    )
-    snapshots = result.scalars().all()
-
-    return [
-        {
-            "polled_at": s.polled_at.isoformat(),
-            "listing_count": s.listing_count,
-            "price_floor": s.price_floor,
-            "price_median": s.price_median,
-            "price_ceiling": s.price_ceiling,
-        }
-        for s in snapshots
-    ]

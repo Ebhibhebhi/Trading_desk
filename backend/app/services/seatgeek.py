@@ -51,8 +51,6 @@ def parse_event(raw: dict) -> dict:
         "venue_capacity": venue.get("capacity"),
         "event_date": event_date,
         "url": raw.get("url", ""),
-        "listing_count": stats.get("listing_count"),
-        "price_floor": stats.get("lowest_price"),
-        "price_median": stats.get("median_price"),
-        "price_ceiling": stats.get("highest_price"),
+        "performer_score": main.get("score"),   # SeatGeek artist popularity (0–1)
+        "event_score": raw.get("score"),         # SeatGeek event demand score (0–1)
     }

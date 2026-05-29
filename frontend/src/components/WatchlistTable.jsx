@@ -1,10 +1,9 @@
 import { useState, useMemo } from 'react';
 
 const SIGNAL_LABELS = {
-  price_firmness:  'Price Firmness',
-  supply_pressure: 'Supply Pressure',
-  depletion_rate:  'Depletion Rate',
-  days_to_event:   'Timing Score',
+  artist_heat:  'Artist Heat',
+  event_buzz:   'Event Buzz',
+  timing_score: 'Timing Score',
 };
 
 export default function WatchlistTable({ events, weights, thresholds, onSelectEvent, selectedEventId }) {
@@ -62,9 +61,6 @@ export default function WatchlistTable({ events, weights, thresholds, onSelectEv
             <th>Venue</th>
             <th className="sortable" onClick={() => handleSort('event_date')}>Date {sortIcon('event_date')}</th>
             <th>Days</th>
-            <th className="sortable" onClick={() => handleSort('price_floor')}>Floor {sortIcon('price_floor')}</th>
-            <th>Median</th>
-            <th className="sortable" onClick={() => handleSort('listing_count')}>Listings {sortIcon('listing_count')}</th>
             <th className="sortable" onClick={() => handleSort('score')}>Score {sortIcon('score')}</th>
             <th>Top Signals</th>
           </tr>
@@ -89,9 +85,6 @@ export default function WatchlistTable({ events, weights, thresholds, onSelectEv
                 <td className="muted">{ev.venue_name}</td>
                 <td className="tabnum">{new Date(ev.event_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' })}</td>
                 <td className="tabnum">{daysOut}d</td>
-                <td className="tabnum">{ev.price_floor ? `$${Math.round(ev.price_floor)}` : '—'}</td>
-                <td className="tabnum muted">{ev.price_median ? `$${Math.round(ev.price_median)}` : '—'}</td>
-                <td className="tabnum">{ev.listing_count ?? '—'}</td>
                 <td>
                   <span className={`score ${ev.tier.toLowerCase()}`}>
                     {(ev.score * 100).toFixed(0)}
