@@ -13,6 +13,8 @@ backend/.env
 
 # Database (generated on first run)
 backend/skystrike.db
+backend/skystrike.db-shm
+backend/skystrike.db-wal
 
 # User config (generated on first run, stores threshold preferences)
 backend/config.json
