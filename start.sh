@@ -1,12 +1,6 @@
 #!/bin/bash
 set -e
 
-echo ">>> Installing frontend deps..."
-npm --prefix frontend install
-
-echo ">>> Building frontend..."
-npm --prefix frontend run build
-
 echo ">>> Installing backend deps..."
 pip install -r backend/requirements.txt
 
